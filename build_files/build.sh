@@ -1,27 +1,36 @@
-#!/bin/bash
+#!/usr/bin/bash
 
-set -ouex pipefail
+set -eou pipefail
 
-# Copy the contents of system_files/ of the git repo to /
-cp -avf "/ctx/system_files"/. /
+echo ">>> Setting up custom RPM repositories..."
 
-### Install packages
+# 1. Add your Throne GitHub Pages RPM repository
+cat <<'EOF' > /etc/yum.repos.d/throne-custom.repo
+[throne-rpm]
+name=Throne RPM
+baseurl=https://yougamepaster.github.io/throne-rpm/
+enabled=1
+gpgcheck=0
+EOF
 
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/43/x86_64/repoview/index.html&protocol=https&redirect=1
+# 2. Add secureblue repo for Trivalent
+curl -sL -o /etc/yum.repos.d/secureblue.repo https://repo.secureblue.dev/secureblue.repo
 
-# this installs a package from fedora repos
-dnf5 install -y tmux
+echo ">>> Installing native RPM packages..."
+# Install Throne, Trivalent, Git, Fastfetch, and Htop
+dnf install -y \
+    Throne \
+    trivalent \
+    git \
+    fastfetch \
+    htop
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+# Clean up build repo file so it doesn't linger in final OS deployment
+rm -f /etc/yum.repos.d/throne-custom.repo
 
-#### Example for enabling a System Unit File
+echo ">>> Installing Flatpak packages..."
+# Ensure Flathub is enabled and install Discord at system scope
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --system flathub com.discordapp.Discord
 
-systemctl enable podman.socket
+echo ">>> Custom build script completed successfully."
