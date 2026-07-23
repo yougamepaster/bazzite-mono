@@ -27,7 +27,7 @@ dnf install -y \
     trivalent \
     git \
     fastfetch \
-    htop
+    btop
 
 # set proper perms for thronecore so TUN mode can work
 chown root:root /opt/Throne/ThroneCore
