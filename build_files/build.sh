@@ -29,12 +29,8 @@ dnf install -y \
     fastfetch \
     htop
 
-# Clean up build repo file so it doesn't linger in final OS deployment
-rm -f /etc/yum.repos.d/throne-custom.repo
-
-echo ">>> Installing Flatpak packages..."
-# Ensure Flathub is enabled and install Discord at system scope
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --system flathub com.discordapp.Discord
+# set proper perms for thronecore so TUN mode can work
+chown root:root /opt/Throne/ThroneCore
+chmod u+s /opt/Throne/ThroneCore
 
 echo ">>> Custom build script completed successfully."
