@@ -17,6 +17,10 @@ EOF
 curl -sL -o /etc/yum.repos.d/secureblue.repo https://repo.secureblue.dev/secureblue.repo
 
 echo ">>> Installing native RPM packages..."
+# remake opt as a normal folder because of throne being a bitch
+rm -rf /opt
+mkdir /opt
+
 # Install Throne, Trivalent, Git, Fastfetch, and Htop
 dnf install -y \
     Throne \
