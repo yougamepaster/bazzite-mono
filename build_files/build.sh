@@ -25,8 +25,8 @@ mkdir /opt
 dnf install -y \
     Throne \
     trivalent \
+    trivalent-selinux \
     git \
-    fastfetch \
     btop
 
 # set proper perms for thronecore so TUN mode can work
